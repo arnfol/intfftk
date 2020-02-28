@@ -74,6 +74,9 @@ use ieee.std_logic_textio.all;
 use std.textio.all;    
 
 entity fft_signle_test is 
+    generic (
+            XSERIES : string:="NEW" -- FPGA Series: ULTRA / 7SERIES
+        );
 end fft_signle_test;
 
 architecture fft_signle_test of fft_signle_test is           
@@ -97,7 +100,6 @@ constant TWDL_WIDTH      : integer:=16; -- Data width for twiddle factor     : 1
 
 constant FLY_FWD         : std_logic:='1'; -- 1 - Use butterflies for Forward FFT    
 
-constant XSERIES         : string:="NEW"; -- FPGA Series: ULTRA / 7SERIES
 constant USE_MLT         : boolean:=FALSE; -- 1 - Use Multiplier for calculation M_PI
 
 constant RAMB_TYPE       : string:="WRAP"; -- Cross-commutation type: WRAP / CONT
