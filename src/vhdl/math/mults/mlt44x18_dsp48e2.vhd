@@ -55,8 +55,8 @@
 library ieee;
 use ieee.std_logic_1164.all;
 
-library unisim;
-use unisim.vcomponents.DSP48E2;
+library work;
+use work.xilinx_dsp.all;
 
 entity mlt44x18_dsp48e2 is
     port (

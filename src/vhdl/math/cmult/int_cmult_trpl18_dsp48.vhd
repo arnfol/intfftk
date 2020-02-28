@@ -74,9 +74,8 @@ use ieee.std_logic_1164.all;
 use ieee.std_logic_signed.all;
 use ieee.std_logic_arith.SXT;
 
-library unisim;
-use unisim.vcomponents.DSP48E1;
-use unisim.vcomponents.DSP48E2;
+library work;
+use work.xilinx_dsp.all;
 
 entity int_cmult_trpl18_dsp48 is
     generic (
