@@ -89,20 +89,18 @@
 -------------------------------------------------------------------------------
 library ieee;
 use ieee.std_logic_1164.all;
-use ieee.std_logic_signed.all; 
-use ieee.std_logic_arith.all;
+use ieee.numeric_std.all;
 
 use ieee.math_real.all;
 
-library unisim;
-use unisim.vcomponents.dsp48e1;	
-use unisim.vcomponents.dsp48e2;
+library work;
+use work.xilinx_dsp.all;
 
 entity row_twiddle_tay is
 	generic (
 		TD			: time:=0.5ns;	--! Simulation time	
 		AWD			: integer:=16;	--! Sin/cos MSB (Mag = 2**Amag)		
-		XSER		: string:="NEW"; --! FPGA family: for 6/7 series: "OLD"; for ULTRASCALE: "NEW"	
+		XSER		: string:="NEW"; --! Architecture: NEW - Xilinx ULTRASCALE, OLD - Xilinx 6/7 series, UNI - plain logic
 		USE_MLT		: boolean:=FALSE; --! use DSP48 for calculation PI * CNT
 		ii			: integer:=2 --! 0, 1, 2, 3, 4, 5, 6, 7 
 	);
@@ -127,6 +125,8 @@ begin
 		ret_val := 21;
 	elsif (XSER = "OLD") then 
 		ret_val := 23;
+	else 
+		ret_val := 23;
 	end if;
 	return ret_val; 
 end function find_widthA;
@@ -139,6 +139,8 @@ begin
 	if (XSER = "NEW") then 
 		del_val := 2;
 	elsif (XSER = "OLD") then 
+		del_val := 0;
+	else
 		del_val := 0;
 	end if;
 	-- ret_val := STD_LOGIC_VECTOR(CONV_UNSIGNED(INTEGER(MATH_PI * 2.0**(13-ii-del_val)), 16));
@@ -179,21 +181,21 @@ pr_rnd: process(clk) is
 begin
 	if rising_edge(clk) then
 		if (cos_pdt(0) = '1') then
-			cos_rnd <= cos_pdt(48-xshift downto 1) + 1 after td;
+			cos_rnd <= std_logic_vector(unsigned(cos_pdt(48-xshift downto 1)) + 1) after td;
 		else
 			cos_rnd <= cos_pdt(48-xshift downto 1) after td;
 		end if;
 		
 		if (sin_pdt(0) = '1') then
-			sin_rnd <= sin_pdt(48-xshift downto 1) + 1 after td;
+			sin_rnd <= std_logic_vector(unsigned(sin_pdt(48-xshift downto 1)) + 1) after td;
 		else
 			sin_rnd <= sin_pdt(48-xshift downto 1) after td;
 		end if;		
 	end if;
 end process;
 
-cos_pdt <= cos_prod(47 downto XSHIFT-1);
-sin_pdt <= sin_prod(47 downto XSHIFT-1);
+cos_pdt <= cos_prod(47 downto XSHIFT-1) after td;
+sin_pdt <= sin_prod(47 downto XSHIFT-1) after td;
 
 ---- Find counter for MATH_PI ----
 cntexp: for jj in 0 to 6-ii generate 
@@ -210,13 +212,13 @@ xROM_PI: if (USE_MLT = FALSE) generate
 		variable ramb_init  : std_logic_array_KKxNN;
 	begin 
 		for jj in 0 to (2**(xx+1)-1) loop
-			ramb_init(jj) := conv_std_logic_vector(MATHPI*jj, 16);
+			ramb_init(jj) := std_logic_vector(to_unsigned(MATHPI*jj, 16));
 		end loop;		
 		return ramb_init;
 	end read_rom;	 
 	constant rom_pi 	: std_logic_array_KKxNN:=read_rom(ii);
 begin
-	mpi(15 downto 00) <= rom_pi(conv_integer(unsigned(cnt_exp))) after td when rising_edge(clk);	
+	mpi(15 downto 00) <= rom_pi(to_integer(unsigned(cnt_exp))) after td when rising_edge(clk);	
 	mpi(23 downto 16) <= x"00";
 end generate;
 
@@ -224,7 +226,7 @@ end generate;
 ---- USE DSP when calculation MATH_PI ----
 xDSP_PI: if (USE_MLT = TRUE) generate
 
-constant std_pi	: std_logic_vector(15 downto 00):=STD_LOGIC_VECTOR(CONV_UNSIGNED(MATHPI, 16));
+constant std_pi	: std_logic_vector(15 downto 00):=std_logic_vector(to_unsigned(MATHPI, 16));
 
 begin
 	pr_pi: process(clk) is
@@ -233,7 +235,7 @@ begin
 			if (rstp = '1') then
 				mpi <= (others=>'0') after td;
 			else
-				mpi <= unsigned(std_pi) * unsigned(cnt_exp) after td;
+				mpi <= std_logic_vector(unsigned(std_pi) * unsigned(cnt_exp)) after td;
 			end if;
 		end if;
 	end process;
@@ -267,6 +269,51 @@ sin_cc(AWD-1+XSHIFT downto 00+XSHIFT) <= sin_aa(AWD-1 downto 0) after td when ri
 cos_cc(XSHIFT-1 downto 00) <= (others => '0');
 sin_cc(XSHIFT-1 downto 00) <= (others => '0');
 -------------------------------------------------------
+
+xUNI : if (XSER = "UNI") generate
+
+    constant PRE_M_PIPE_NUM  : integer := 2;                            -- number of input pipelines for mult args
+    constant MULT_PIPE_NUM   : integer := 1;                            -- number of pipelines after mult
+    constant PRE_A_PIPE_NUM  : integer := PRE_M_PIPE_NUM+MULT_PIPE_NUM; -- number of input pipelines for sum arg
+    constant ADD_PIPE_NUM    : integer := 2;                            -- number of pipelines after adder
+
+    type i_aa_type is array (PRE_M_PIPE_NUM-1 downto 0) of signed(29 downto 0);
+    type i_cc_type is array (PRE_A_PIPE_NUM-1 downto 0) of signed(47 downto 0);
+    type i_mpx_type is array (PRE_M_PIPE_NUM-1 downto 0) of signed(17 downto 0);
+    type m_type is array (MULT_PIPE_NUM-1 downto 0) of signed(47 downto 0);
+    type a_type is array (ADD_PIPE_NUM-1 downto 0) of signed(47 downto 0);
+
+    signal sin_aa_r   : i_aa_type;
+    signal cos_aa_r   : i_aa_type;
+    signal sin_cc_r   : i_cc_type;
+    signal cos_cc_r   : i_cc_type;
+    signal mpx_r      : i_mpx_type;
+    signal mcos_r     : m_type;
+    signal msin_r     : m_type;
+    signal cos_prod_r : a_type;
+    signal sin_prod_r : a_type;
+
+begin
+
+	dsp_proc : process (clk) begin
+		if (rising_edge(clk)) then
+	        sin_aa_r <= sin_aa_r(PRE_M_PIPE_NUM-2 downto 0) & signed(sin_aa);
+	        cos_aa_r <= cos_aa_r(PRE_M_PIPE_NUM-2 downto 0) & signed(cos_aa);
+	        mpx_r    <= mpx_r(PRE_M_PIPE_NUM-2 downto 0) & signed(mpx);
+	        sin_cc_r <= sin_cc_r(PRE_A_PIPE_NUM-2 downto 0) & signed(sin_cc);
+	        cos_cc_r <= cos_cc_r(PRE_A_PIPE_NUM-2 downto 0) & signed(cos_cc);
+
+	        mcos_r <= mcos_r(MULT_PIPE_NUM-2 downto 0) & (resize(cos_aa_r(cos_aa_r'high), 48) * resize(mpx_r(mpx_r'high), 48));
+	        msin_r <= msin_r(MULT_PIPE_NUM-2 downto 0) & (resize(sin_aa_r(sin_aa_r'high), 48) * resize(mpx_r(mpx_r'high), 48));
+
+	        cos_prod_r <= cos_prod_r(ADD_PIPE_NUM-2 downto 0) & (msin_r(MULT_PIPE_NUM-1) + cos_cc_r(PRE_A_PIPE_NUM-1));
+	        sin_prod_r <= sin_prod_r(ADD_PIPE_NUM-2 downto 0) & (mcos_r(MULT_PIPE_NUM-1) + sin_cc_r(PRE_A_PIPE_NUM-1));
+	    end if;
+	end process dsp_proc;
+
+	cos_prod <= std_logic_vector(cos_prod_r(ADD_PIPE_NUM-1));
+	sin_prod <= std_logic_vector(sin_prod_r(ADD_PIPE_NUM-1));
+end generate;
 
 x7SERIES: if (XSER = "OLD") generate
 	MULT_ADD: DSP48E1 --   +/-(A*B+Cin)   -- for Virtex-6 and 7 families

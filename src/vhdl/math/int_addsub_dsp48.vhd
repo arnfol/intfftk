@@ -76,18 +76,17 @@
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 
+library work;
+use work.xilinx_dsp.all;
+
 library ieee;
 use ieee.std_logic_1164.all;
-use ieee.std_logic_unsigned.all;
-
-library unisim;
-use unisim.vcomponents.DSP48E1;
-use unisim.vcomponents.DSP48E2;
+use ieee.numeric_std.all;
 
 entity int_addsub_dsp48 is
     generic (
-        DSPW      : natural:=24;   --! Input data width for DSP48
-        XSER      : string :="NEW" --! Xilinx series: NEW - DSP48E2, OLD - DSP48E1
+        DSPW      : natural:=96;   --! Input data width for DSP48
+        XSER      : string :="UNI" --! Architecture: NEW - Xilinx DSP48E2, OLD - Xilinx DSP48E1, UNI - plain logic
     );
     port (
         IA_RE     : in  std_logic_vector(DSPW-1 downto 0); --! Real input data A (even)
@@ -106,10 +105,51 @@ entity int_addsub_dsp48 is
 end int_addsub_dsp48;
 
 architecture int_addsub_dsp48 of int_addsub_dsp48 is
+        
+begin
+
+xGEN_UNI: if (XSER = "UNI") generate
+
+    constant PRE_PIPE_NUM  : integer := 2; -- number of input pipelines
+    constant POST_PIPE_NUM : integer := 2; -- number of output pipelines
+
+    type i_type is array (PRE_PIPE_NUM-1 downto 0) of signed(DSPW-1 downto 0);
+    type o_type is array (POST_PIPE_NUM-1 downto 0) of signed(DSPW downto 0);
+
+    signal A_RE : i_type;
+    signal A_IM : i_type;
+    signal B_RE : i_type;
+    signal B_IM : i_type;
+
+    signal X_RE : o_type;
+    signal X_IM : o_type;
+    signal Y_RE : o_type;
+    signal Y_IM : o_type;
 
 begin
 
-xGEN_HIGH: if (DSPW > 23) and (DSPW < 48) generate
+    adder : process (CLK) begin
+        if (rising_edge(CLK)) then
+            A_RE <= A_RE(PRE_PIPE_NUM-2 downto 0) & signed(IA_RE);
+            A_IM <= A_IM(PRE_PIPE_NUM-2 downto 0) & signed(IA_IM);
+            B_RE <= B_RE(PRE_PIPE_NUM-2 downto 0) & signed(IB_RE);
+            B_IM <= B_IM(PRE_PIPE_NUM-2 downto 0) & signed(IB_IM);
+
+            X_RE <= X_RE(POST_PIPE_NUM-2 downto 0) & (resize(A_RE(A_RE'high), DSPW+1) + resize(B_RE(A_RE'high), DSPW+1));
+            X_IM <= X_IM(POST_PIPE_NUM-2 downto 0) & (resize(A_IM(A_IM'high), DSPW+1) + resize(B_IM(A_IM'high), DSPW+1));
+            Y_RE <= Y_RE(POST_PIPE_NUM-2 downto 0) & (resize(A_RE(B_RE'high), DSPW+1) - resize(B_RE(B_RE'high), DSPW+1));
+            Y_IM <= Y_IM(POST_PIPE_NUM-2 downto 0) & (resize(A_IM(B_IM'high), DSPW+1) - resize(B_IM(B_IM'high), DSPW+1));
+        end if;
+    end process adder;
+
+    OX_RE <= std_logic_vector(X_RE(POST_PIPE_NUM-1));
+    OX_IM <= std_logic_vector(X_IM(POST_PIPE_NUM-1));
+    OY_RE <= std_logic_vector(Y_RE(POST_PIPE_NUM-1));
+    OY_IM <= std_logic_vector(Y_IM(POST_PIPE_NUM-1));
+
+end generate;
+
+xGEN_HIGH: if (XSER /= "UNI") and (DSPW > 23) and (DSPW < 48) generate
     signal dspA_RE   : std_logic_vector(29 downto 0);
     signal dspB_RE   : std_logic_vector(17 downto 0);
     signal dspC_RE   : std_logic_vector(47 downto 0);
@@ -710,7 +750,7 @@ begin
 end generate;
 
 
-xGEN_LOW: if (DSPW < 24) generate
+xGEN_LOW: if (XSER /= "UNI") and (DSPW < 24) generate
     signal dspA_XY   : std_logic_vector(29 downto 0);
     signal dspB_XY   : std_logic_vector(17 downto 0);
     signal dspC_XY   : std_logic_vector(47 downto 0);
@@ -1018,7 +1058,7 @@ begin
 end generate;
 
 
-xGEN_DBL: if (DSPW > 47) generate
+xGEN_DBL: if (XSER /= "UNI") and (DSPW > 47) generate
     signal dspA_RE1        : std_logic_vector(29 downto 0);
     signal dspB_RE1        : std_logic_vector(17 downto 0);
     signal dspC_RE1        : std_logic_vector(47 downto 0);

@@ -83,17 +83,16 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
-use ieee.std_logic_unsigned.all;
+use ieee.numeric_std.all;
 
-library unisim;
-use unisim.vcomponents.DSP48E1;
-use unisim.vcomponents.DSP48E2;
+library work;
+use work.xilinx_dsp.all;
 
 entity int_cmult_dsp48 is
     generic (      
         DTW       : natural:=29;    --! Input data width
         TWD       : natural:=17;    --! Twiddle factor data width
-        XSER      : string :="NEW"  --! Xilinx series: NEW - DSP48E2, OLD - DSP48E1
+        XSER      : string :="NEW"  --! Architecture: NEW - Xilinx DSP48E2, OLD - Xilinx DSP48E1, UNI - plain logic
     );
     port (
         DI_RE     : in  std_logic_vector(DTW-1 downto 0); --! Real input data
@@ -175,11 +174,66 @@ signal D_IM       : std_logic_vector(DTW-1 downto 0);
 
 begin
 
-DO_RE <= D_RE;
-DO_IM <= D_IM;
+xGEN_UNI: if (XSER = "UNI") generate
+
+    constant PRE_M_PIPE_NUM  : integer := 2; -- number of input pipelines for mult args
+    constant MULT_PIPE_NUM   : integer := 2; -- number of pipelines after mult
+    constant ADD_PIPE_NUM    : integer := 2; -- number of pipelines after adder
+
+    type pre_dt_type is array (PRE_M_PIPE_NUM-1 downto 0) of signed(DTW-1 downto 0);
+    type pre_tw_type is array (PRE_M_PIPE_NUM-1 downto 0) of signed(TWD-1 downto 0);
+    type mult_type is array (MULT_PIPE_NUM-1 downto 0) of signed(DTW+TWD-1 downto 0);
+    type add_type is array (ADD_PIPE_NUM-1 downto 0) of signed(DTW-1 downto 0);
+
+    signal d_re_pipe : pre_dt_type;
+    signal d_im_pipe : pre_dt_type;
+    signal w_re_pipe : pre_tw_type;
+    signal w_im_pipe : pre_tw_type;
+
+    signal drwr_mult : mult_type;
+    signal drwi_mult : mult_type;
+    signal diwr_mult : mult_type;
+    signal diwi_mult : mult_type;
+
+    signal calc_add : signed(DTW-1 downto 0);
+    signal calc_sub : signed(DTW-1 downto 0);
+
+    signal o_re : add_type;
+    signal o_im : add_type;
+
+begin
+
+    dsp_proc : process (clk) begin
+        if (rising_edge(clk)) then
+            d_re_pipe <= d_re_pipe(PRE_M_PIPE_NUM-2 downto 0) & signed(DI_RE);
+            d_im_pipe <= d_im_pipe(PRE_M_PIPE_NUM-2 downto 0) & signed(DI_IM);
+            w_re_pipe <= w_re_pipe(PRE_M_PIPE_NUM-2 downto 0) & signed(WW_RE);
+            w_im_pipe <= w_im_pipe(PRE_M_PIPE_NUM-2 downto 0) & signed(WW_IM);
+
+            drwr_mult <= drwr_mult(MULT_PIPE_NUM-2 downto 0) & (resize(d_re_pipe(PRE_M_PIPE_NUM-1) * w_re_pipe(PRE_M_PIPE_NUM-1), DTW+TWD));
+            drwi_mult <= drwi_mult(MULT_PIPE_NUM-2 downto 0) & (resize(d_re_pipe(PRE_M_PIPE_NUM-1) * w_im_pipe(PRE_M_PIPE_NUM-1), DTW+TWD));
+            diwr_mult <= diwr_mult(MULT_PIPE_NUM-2 downto 0) & (resize(d_im_pipe(PRE_M_PIPE_NUM-1) * w_re_pipe(PRE_M_PIPE_NUM-1), DTW+TWD));
+            diwi_mult <= diwi_mult(MULT_PIPE_NUM-2 downto 0) & (resize(d_im_pipe(PRE_M_PIPE_NUM-1) * w_im_pipe(PRE_M_PIPE_NUM-1), DTW+TWD));
+
+            o_re <= o_re(ADD_PIPE_NUM-2 downto 0) & calc_sub;
+            o_im <= o_im(ADD_PIPE_NUM-2 downto 0) & calc_add;
+        end if;
+    end process dsp_proc;
+
+    calc_sub <= drwr_mult(MULT_PIPE_NUM-1)(DTW-1+TWD-1 downto TWD-1) - diwi_mult(MULT_PIPE_NUM-1)(DTW-1+TWD-1 downto TWD-1);
+    calc_add <= drwi_mult(MULT_PIPE_NUM-1)(DTW-1+TWD-1 downto TWD-1) + diwr_mult(MULT_PIPE_NUM-1)(DTW-1+TWD-1 downto TWD-1);
+
+    DO_RE <= std_logic_vector(o_re(ADD_PIPE_NUM-1));
+    DO_IM <= std_logic_vector(o_im(ADD_PIPE_NUM-1));
+end generate;
+
+xGEN_OUT: if (XSER /= "UNI") generate
+    DO_RE <= D_RE;
+    DO_IM <= D_IM;
+end generate;
 
 ---- Twiddle factor width less than 19 ----
-xGEN_TWD18: if (TWD < 19) generate
+xGEN_TWD18: if (XSER /= "UNI") and (TWD < 19) generate
     ---- Data width from 8 to 25/27 ----
     xGEN_SNGL: if (DTW < DTW18_SNGL) generate
         signal P_RE : std_logic_vector(47 downto 0);
@@ -304,7 +358,7 @@ xGEN_TWD18: if (TWD < 19) generate
 end generate;
 
 ---- Twiddle factor width more than 18 and less than 25/27 ----
-xGEN_TWD25: if ((TWD > 18) and (TWD < TWD_DSP)) generate
+xGEN_TWD25: if (XSER /= "UNI") and ((TWD > 18) and (TWD < TWD_DSP)) generate
     ---- Data width from 8 to 18 ----
     xGEN_SNGL: if (DTW < 19) generate
         signal P_RE : std_logic_vector(47 downto 0);
