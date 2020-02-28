@@ -1,0 +1,252 @@
+# -------------------------------------------------------------------------- #
+#
+# Copyright (C) 2018  Intel Corporation. All rights reserved.
+# Your use of Intel Corporation's design tools, logic functions 
+# and other software and tools, and its AMPP partner logic 
+# functions, and any output files from any of the foregoing 
+# (including device programming or simulation files), and any 
+# associated documentation or information are expressly subject 
+# to the terms and conditions of the Intel Program License 
+# Subscription Agreement, the Intel Quartus Prime License Agreement,
+# the Intel FPGA IP License Agreement, or other applicable license
+# agreement, including, without limitation, that your use is for
+# the sole purpose of programming logic devices manufactured by
+# Intel and sold by Intel or its authorized distributors.  Please
+# refer to the applicable agreement for further details.
+#
+# -------------------------------------------------------------------------- #
+#
+# Quartus Prime
+# Version 18.0.0 Build 614 04/24/2018 SJ Standard Edition
+# Date created = 00:50:48  February 29, 2020
+#
+# -------------------------------------------------------------------------- #
+#
+# Notes:
+#
+# 1) The default values for assignments are stored in the file:
+#		intfft_assignment_defaults.qdf
+#    If this file doesn't exist, see file:
+#		assignment_defaults.qdf
+#
+# 2) Altera recommends that you do not modify this file. This
+#    file is updated automatically by the Quartus Prime software
+#    and any changes you make may be lost or overwritten.
+#
+# -------------------------------------------------------------------------- #
+
+
+set_global_assignment -name FAMILY "Arria V"
+set_global_assignment -name DEVICE 5AGXFB3H4F35C5
+set_global_assignment -name TOP_LEVEL_ENTITY int_fftNk
+set_global_assignment -name ORIGINAL_QUARTUS_VERSION 18.0.0
+set_global_assignment -name PROJECT_CREATION_TIME_DATE "00:50:48  FEBRUARY 29, 2020"
+set_global_assignment -name LAST_QUARTUS_VERSION "18.0.0 Standard Edition"
+set_global_assignment -name PROJECT_OUTPUT_DIRECTORY output_files
+set_global_assignment -name VHDL_FILE ../../src/vhdl/main/xilinx_dsp.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/math/mults/mlt25x18_dsp48.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/math/mults/mlt35x25_dsp48e1.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/math/mults/mlt35x27_dsp48e2.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/math/mults/mlt42x18_dsp48e1.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/math/mults/mlt44x18_dsp48e2.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/math/mults/mlt52x25_dsp48e1.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/math/mults/mlt52x27_dsp48e2.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/math/mults/mlt59x18_dsp48e1.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/math/mults/mlt61x18_dsp48e2.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/math/int_addsub_dsp48.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/math/cmult/int_cmult_dbl18_dsp48.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/math/cmult/int_cmult_dbl35_dsp48.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/math/cmult/int_cmult_trpl18_dsp48.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/math/cmult/int_cmult_trpl52_dsp48.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/math/cmult/int_cmult18x25_dsp48.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/math/cmult/int_cmult_dsp48.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/twiddle/row_twiddle_tay.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/twiddle/rom_twiddle_int.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/buffers/ramb_tdp_rw.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/delay/int_align_fft.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/delay/int_align_ifft.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/delay/int_delay_line.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/delay/int_delay_line_old.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/delay/int_delay_wrap.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/buffers/inbuf_half_path.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/buffers/inbuf_half_wrap.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/buffers/int_bitrev_cache.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/buffers/int_bitrev_order.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/buffers/iobuf_flow_int2.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/buffers/iobuf_wrap_int2.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/buffers/outbuf_half_path.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/buffers/ramb_tdp_one_clk2.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/fft/int_dif2_fly.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/fft/int_dit2_fly.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/fft/int_fftNk.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/fft/int_ifftNk.vhd
+set_global_assignment -name VHDL_FILE ../../src/vhdl/main/int_fft_single_path.vhd
+set_parameter -name XSER UNI
+set_parameter -name NFFT 8
+set_parameter -name DATA_WIDTH 16
+set_parameter -name TWDL_WIDTH 16
+set_instance_assignment -name VIRTUAL_PIN ON -to CLK
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_ENA
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM0[0]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM0[1]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM0[2]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM0[3]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM0[4]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM0[5]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM0[6]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM0[7]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM0[8]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM0[9]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM0[10]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM0[11]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM0[12]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM0[13]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM0[14]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM0[15]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM1[0]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM1[1]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM1[2]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM1[3]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM1[4]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM1[5]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM1[6]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM1[7]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM1[8]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM1[9]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM1[10]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM1[11]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM1[12]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM1[13]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM1[14]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_IM1[15]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE0[0]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE0[1]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE0[2]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE0[3]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE0[4]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE0[5]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE0[6]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE0[7]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE0[8]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE0[9]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE0[10]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE0[11]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE0[12]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE0[13]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE0[14]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE0[15]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE1[0]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE1[1]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE1[2]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE1[3]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE1[4]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE1[5]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE1[6]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE1[7]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE1[8]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE1[9]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE1[10]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE1[11]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE1[12]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE1[13]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE1[14]
+set_instance_assignment -name VIRTUAL_PIN ON -to DI_RE1[15]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM0[0]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM0[1]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM0[2]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM0[3]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM0[4]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM0[5]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM0[6]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM0[7]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM0[8]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM0[9]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM0[10]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM0[11]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM0[12]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM0[13]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM0[14]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM0[15]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM0[16]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM0[17]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM0[18]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM0[19]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM0[20]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM0[21]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM0[22]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM0[23]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM1[0]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM1[1]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM1[2]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM1[3]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM1[4]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM1[5]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM1[6]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM1[7]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM1[8]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM1[9]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM1[10]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM1[11]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM1[12]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM1[13]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM1[14]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM1[15]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM1[16]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM1[17]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM1[18]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM1[19]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM1[20]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM1[21]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM1[22]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_IM1[23]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE0[0]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE0[1]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE0[2]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE0[3]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE0[4]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE0[5]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE0[6]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE0[7]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE0[8]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE0[9]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE0[10]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE0[11]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE0[12]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE0[13]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE0[14]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE0[15]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE0[16]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE0[17]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE0[18]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE0[19]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE0[20]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE0[21]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE0[22]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE0[23]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE1[0]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE1[1]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE1[2]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE1[3]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE1[4]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE1[5]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE1[6]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE1[7]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE1[8]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE1[9]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE1[10]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE1[11]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE1[12]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE1[13]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE1[14]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE1[15]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE1[16]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE1[17]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE1[18]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE1[19]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE1[20]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE1[21]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE1[22]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_RE1[23]
+set_instance_assignment -name VIRTUAL_PIN ON -to DO_VAL
+set_instance_assignment -name VIRTUAL_PIN ON -to RST
+set_instance_assignment -name VIRTUAL_PIN ON -to USE_FLY
