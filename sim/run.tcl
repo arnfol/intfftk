@@ -4,7 +4,7 @@
 
 set worklib "work"
 set top_lvl "fft_signle_test"
-set macro_file ""
+set macro_file "../wave.do"
 set do_wave "true"
 
 # -------------------------------------------------------------------

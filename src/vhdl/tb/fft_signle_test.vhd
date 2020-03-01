@@ -93,7 +93,7 @@ end function;
 -- **************************************************************** --
 -- **** Constant declaration: change any parameter for testing **** --
 -- **************************************************************** --
-constant NFFT            : integer:=7; -- Number of stages = log2(FFT LENGTH)
+constant NFFT            : integer:=10; -- Number of stages = log2(FFT LENGTH)
 
 constant DATA_WIDTH      : integer:=16; -- Data width for signal imitator    : 8-32.
 constant TWDL_WIDTH      : integer:=16; -- Data width for twiddle factor     : 16-24.
@@ -138,7 +138,7 @@ start <= '0', '1' after 100 ns;
 ---------------------------------------------------------------- 
 read_signal: process is
     file fl_data      : text;
-    constant fl_path  : string:="../../../../../math/di_single.dat";
+    constant fl_path  : string:="../../math/di_single.dat";
 
     variable l        : line;    
     variable lt1      : integer:=0; 
@@ -364,6 +364,8 @@ begin
         di_im <= (others => 'X');
         wait;
         
+        report "simulation finished successfully" severity FAILURE;
+
     end if;
 end process; 
 
