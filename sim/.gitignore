@@ -2,3 +2,9 @@ modelsim/*
 *.ini
 *.wlf
 *.vstf
+
+vivado/.*
+vivado/*.jou
+vivado/*.log
+vivado/*.ini
+vivado/xilinx_vip

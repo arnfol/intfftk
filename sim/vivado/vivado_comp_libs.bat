@@ -1,0 +1,1 @@
+vivado -mode batch -source "./vivado_comp_libs.tcl" 
