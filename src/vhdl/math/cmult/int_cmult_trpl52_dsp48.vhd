@@ -71,11 +71,12 @@
 
 library ieee;
 use ieee.std_logic_1164.all;
-use ieee.std_logic_signed.all; 
-use ieee.std_logic_arith.SXT;
+use ieee.std_logic_signed.all;
 
-library work;
-use work.xilinx_dsp.all;
+library unisim;
+use unisim.vcomponents.DSP48E1;    
+use unisim.vcomponents.DSP48E2;    
+use ieee.std_logic_arith.SXT;
 
 entity int_cmult_trpl52_dsp48 is
     generic (
