@@ -7,19 +7,26 @@ set top_lvl "fft_signle_test"
 set macro_file "../wave.do"
 set do_wave "true"
 
+set xser "NEW"
+
 # -------------------------------------------------------------------
 # make libs
 # -------------------------------------------------------------------
 
 vlib $worklib
+if {$xser == "UNI"} { vlib unisim }
 
 # -------------------------------------------------------------------
 # compile
 # -------------------------------------------------------------------
 
+# package-replacement for Xilinx DSP components
+if {$xser == "UNI"} {
+	vcom -work unisim "../../src/vhdl/math/vcomponents.vhd"
+} 
+
 # source files
 vcom -work $worklib {*}" \
-../../src/vhdl/main/xilinx_dsp.vhd \
 ../../src/vhdl/math/mults/mlt25x18_dsp48.vhd \
 ../../src/vhdl/math/mults/mlt35x25_dsp48e1.vhd \
 ../../src/vhdl/math/mults/mlt35x27_dsp48e2.vhd \
@@ -74,7 +81,7 @@ if {$do_wave} {
 	view wave
 }
 
-vsim "$worklib.$top_lvl" -wlf "../$top_lvl.wlf" -gXSERIES="UNI"
+vsim "$worklib.$top_lvl" -wlf "../$top_lvl.wlf" -gXSERIES=$xser
 
 if {!($macro_file eq "")} { do $macro_file }
 

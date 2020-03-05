@@ -93,8 +93,9 @@ use ieee.numeric_std.all;
 
 use ieee.math_real.all;
 
-library work;
-use work.xilinx_dsp.all;
+library unisim;
+use unisim.vcomponents.DSP48E1;
+use unisim.vcomponents.DSP48E2;
 
 entity row_twiddle_tay is
 	generic (

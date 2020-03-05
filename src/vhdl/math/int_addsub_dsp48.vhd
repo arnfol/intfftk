@@ -76,8 +76,9 @@
 -------------------------------------------------------------------------------
 -------------------------------------------------------------------------------
 
-library work;
-use work.xilinx_dsp.all;
+library unisim;
+use unisim.vcomponents.DSP48E1;
+use unisim.vcomponents.DSP48E2;
 
 library ieee;
 use ieee.std_logic_1164.all;

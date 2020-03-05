@@ -85,8 +85,9 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
-library work;
-use work.xilinx_dsp.all;
+library unisim;
+use unisim.vcomponents.DSP48E1;
+use unisim.vcomponents.DSP48E2;
 
 entity int_cmult_dsp48 is
     generic (      
