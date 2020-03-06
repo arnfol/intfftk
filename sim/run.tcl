@@ -87,5 +87,5 @@ if {!($macro_file eq "")} { do $macro_file }
 
 # run
 if {$do_wave} { configure wave -timelineunits ns }
-run -all
+run 120 us
 if {$do_wave} { wave zoom full}

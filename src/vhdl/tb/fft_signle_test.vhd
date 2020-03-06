@@ -128,6 +128,22 @@ signal di_re             : std_logic_vector(DATA_WIDTH-1 downto 0):=(others=>'0'
 signal di_im             : std_logic_vector(DATA_WIDTH-1 downto 0):=(others=>'0'); 
 signal di_en             : std_logic:='0';
 
+signal sc_re    : std_logic_vector(0*NFFT+DATA_WIDTH-1 downto 0);
+signal sc_im    : std_logic_vector(0*NFFT+DATA_WIDTH-1 downto 0);
+signal sc_vl    : std_logic;
+
+signal un_re    : std_logic_vector(1*NFFT+DATA_WIDTH-1 downto 0);
+signal un_im    : std_logic_vector(1*NFFT+DATA_WIDTH-1 downto 0);
+signal un_vl    : std_logic;
+
+signal uu_re    : std_logic_vector(1*NFFT+DATA_WIDTH-1 downto 0);
+signal uu_im    : std_logic_vector(1*NFFT+DATA_WIDTH-1 downto 0);
+signal uu_vl    : std_logic;
+
+signal rn_re    : std_logic_vector(0*NFFT+DATA_WIDTH-1 downto 0);
+signal rn_im    : std_logic_vector(0*NFFT+DATA_WIDTH-1 downto 0);
+signal rn_vl    : std_logic;   
+
 begin
 
 clk <= not clk after 5 ns;
@@ -370,19 +386,48 @@ begin
 end process; 
 
 
-xUUT: if (NFFT > 0) generate
+write_singnals: process(clk) is -- write file_io.out (++ done goes to '1')
+    file un_log    : TEXT open WRITE_MODE is "../../math/do_single_unscaled.dat";
+    file uu_log    : TEXT open WRITE_MODE is "../../math/do_single_unscaled_uni.dat";
+    file sc_log    : TEXT open WRITE_MODE is "../../math/do_single_scaled.dat";
+    file rn_log    : TEXT open WRITE_MODE is "../../math/do_single_round.dat";
+    variable stx   : LINE;
+    variable spc   : string(1 to 4) := (others => ' ');    
+begin
+    if rising_edge(clk) then
 
-    signal sc_re    : std_logic_vector(0*NFFT+DATA_WIDTH-1 downto 0);
-    signal sc_im    : std_logic_vector(0*NFFT+DATA_WIDTH-1 downto 0);
-    signal sc_vl    : std_logic;
+        if (un_vl = '1') then
+            write(stx, CONV_INTEGER(un_re), LEFT);
+            write(stx, spc);
+            write(stx, CONV_INTEGER(un_im), LEFT);
+            writeline(un_log, stx);
+        end if;
 
-    signal un_re    : std_logic_vector(1*NFFT+DATA_WIDTH-1 downto 0);
-    signal un_im    : std_logic_vector(1*NFFT+DATA_WIDTH-1 downto 0);
-    signal un_vl    : std_logic;
-    
-    signal rn_re    : std_logic_vector(0*NFFT+DATA_WIDTH-1 downto 0);
-    signal rn_im    : std_logic_vector(0*NFFT+DATA_WIDTH-1 downto 0);
-    signal rn_vl    : std_logic;    
+        if (uu_vl = '1') then
+            write(stx, CONV_INTEGER(uu_re), LEFT);
+            write(stx, spc);
+            write(stx, CONV_INTEGER(uu_im), LEFT);
+            writeline(uu_log, stx);
+        end if;
+
+        if (sc_vl = '1') then
+            write(stx, CONV_INTEGER(sc_re), LEFT);
+            write(stx, spc);
+            write(stx, CONV_INTEGER(sc_im), LEFT);
+            writeline(sc_log, stx);
+        end if;
+
+        if (rn_vl = '1') then
+            write(stx, CONV_INTEGER(rn_re), LEFT);
+            write(stx, spc);
+            write(stx, CONV_INTEGER(rn_im), LEFT);
+            writeline(rn_log, stx);
+        end if;
+        
+    end if;
+end process;
+
+xUUT: if (NFFT > 0) generate 
 
 begin
     
@@ -409,6 +454,33 @@ UUT_UNSCALED: entity work.int_fft_single_path
         DO_RE       => un_re,
         DO_IM       => un_im,
         DO_VL       => un_vl,
+        ---- Butterflies ----
+        FLY_FWD     => fly_fwd
+    );
+
+UUT_UNSCALED_UNI: entity work.int_fft_single_path
+    generic map (
+        DATA_WIDTH  => DATA_WIDTH,
+        TWDL_WIDTH  => TWDL_WIDTH,
+        -- MODE        => "UNSCALED",
+        FORMAT      => FORMAT1,
+        RNDMODE     => RNDMOD1,
+        XSERIES     => "UNI",
+        NFFT        => NFFT,
+        USE_MLT     => USE_MLT
+    )
+    port map ( 
+        ---- Common signals ----
+        RESET       => rstp,
+        CLK         => clk,    
+        ---- Input data ----
+        DI_RE       => di_re,
+        DI_IM       => di_im,
+        DI_EN       => di_en,
+        ---- Output data ----
+        DO_RE       => uu_re,
+        DO_IM       => uu_im,
+        DO_VL       => uu_vl,
         ---- Butterflies ----
         FLY_FWD     => fly_fwd
     );
