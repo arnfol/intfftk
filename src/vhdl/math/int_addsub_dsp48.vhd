@@ -106,13 +106,25 @@ entity int_addsub_dsp48 is
 end int_addsub_dsp48;
 
 architecture int_addsub_dsp48 of int_addsub_dsp48 is
-        
+    
+    function addsub_delay(iDW: integer) return integer is
+        variable ret_val : integer:=0;
+    begin
+        if (iDW < 48) then
+            ret_val := 1;
+        else 
+            ret_val := 2;
+        end if;
+        return ret_val;
+    end function addsub_delay;
+
 begin
 
 xGEN_UNI: if (XSER = "UNI") generate
 
-    constant PRE_PIPE_NUM  : integer := 2; -- number of input pipelines
-    constant POST_PIPE_NUM : integer := 2; -- number of output pipelines
+
+    constant PRE_PIPE_NUM  : integer := addsub_delay(DSPW); -- number of input pipelines
+    constant POST_PIPE_NUM : integer := 1; -- number of output pipelines
 
     type i_type is array (PRE_PIPE_NUM-1 downto 0) of signed(DSPW-1 downto 0);
     type o_type is array (POST_PIPE_NUM-1 downto 0) of signed(DSPW downto 0);

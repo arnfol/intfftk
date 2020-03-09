@@ -88,6 +88,7 @@ function find_delay(sVAR : string; iDW, iTW: integer) return integer is
     variable loDSP : integer;
     variable hiDSP : integer;
 begin
+    if (sVAR = "UNI") then return 6; end if;
     if (sVAR = "OLD") then loDSP := 25; else loDSP := 27; end if;
     if (sVAR = "OLD") then hiDSP := 43; else hiDSP := 45; end if;
 
