@@ -4,8 +4,7 @@
 * Parameters and their ranges to test:
     * DATA_WIDTH: 8, 16, 32
     * TWDL_WIDTH: 8, 16, 24
-    * FORMAT: 1, 0     
-    * RNDMODE: 1, 0   
+    * MODE: UNSCALED, SCALED, ROUNDED
     * XSERIES: "OLD", "NEW", "UNI"   
     * NFFT: 64, 512, 1024, 2048, 8192
     * USE_MLT: 1, 0
@@ -22,7 +21,7 @@
 * Parameters and their ranges to test:
     * DATA_WIDTH: 8, 16, 32
     * TWDL_WIDTH: 8, 16, 24
-    * FORMAT: 1
+    * MODE: UNSCALED
     * XSERIES: "NEW", "UNI"   
     * NFFT: 64, 512, 1024, 2048, 8192
 * Input valid randomization
