@@ -1,7 +1,8 @@
 modelsim/*
-*.ini
 *.wlf
 *.vstf
+
+__pycache__
 
 vivado/.*
 vivado/*.jou

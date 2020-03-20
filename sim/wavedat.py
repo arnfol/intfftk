@@ -29,10 +29,10 @@ def write_dat(wave, filename):
 	"""Output list of complex values to file"""
 	with open(filename, mode='w') as f:
 		for n in wave:
-			f.write("{} {}\n".format(n.real, n.imag))
+			f.write("{} {}\n".format(int(n.real), int(n.imag)))
 
 
-def read_dat(filename, packet_num=1):
+def read_dat(filename, size, packet_num=1):
 	"""Read .dat file and returns the list of complex values.
 	.dat file can contain several data packets, so the number 
 	of the packet to read should be provided"""
@@ -41,11 +41,11 @@ def read_dat(filename, packet_num=1):
 
 	with open(filename, "r") as f:
 		# skip first packets
-		for _ in range((packet_num-1)*fft_size):
+		for _ in range((packet_num-1)*size):
 			next(f)
 
 		# read packet
-		for _ in range(fft_size):
+		for _ in range(size):
 			l = f.readline().split()
 			packet.append(complex(int(l[0]), int(l[1])))
 
@@ -96,12 +96,13 @@ if __name__ == '__main__':
 
 	nfft = 10
 	fft_size = 2 ** nfft
+	data_width = 16
 		
-	sin      = gen_wave(size=fft_size, period=5*2*np.pi, amp=50, wavetype="sin")
-	sawtooth = gen_wave(size=fft_size, period=5*2*np.pi, amp=50, wavetype="sawtooth")
-	triangle = gen_wave(size=fft_size, period=5*2*np.pi, amp=50, wavetype="triangle")
-	square   = gen_wave(size=fft_size, period=5*2*np.pi, amp=50, wavetype="square")
-	complsin = gen_wave(size=fft_size, period=5*2*np.pi, amp=50, wavetype="complsin")
+	sin      = gen_wave(size=fft_size, period=5*2*np.pi, amp=2**(data_width-1), wavetype="sin")
+	sawtooth = gen_wave(size=fft_size, period=5*2*np.pi, amp=2**(data_width-1), wavetype="sawtooth")
+	triangle = gen_wave(size=fft_size, period=5*2*np.pi, amp=2**(data_width-1), wavetype="triangle")
+	square   = gen_wave(size=fft_size, period=5*2*np.pi, amp=2**(data_width-1), wavetype="square")
+	complsin = gen_wave(size=fft_size, period=5*2*np.pi, amp=2**(data_width-1), wavetype="complsin")
 
 	data = {
 		"sin"      : sin,
@@ -111,7 +112,7 @@ if __name__ == '__main__':
 		"complsin" : complsin,
 	}
 
-	for k, i in data.items():
-		add_noise(i, 30)
+	# for k, i in data.items():
+	# 	add_noise(i, 30)
 
 	plot_complex_data(data)

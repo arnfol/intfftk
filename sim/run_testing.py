@@ -1,63 +1,58 @@
-import modelsim
+from pysim import modelsim
+from pysim import tester
+import wavedat
 import numpy as np
+from scipy.fft import fft
+from pprint import PrettyPrinter
 
+pp = PrettyPrinter()
 
-# -----------------------------------------------------------------------
-#
-# -----------------------------------------------------------------------
-def run_test(params: dict, verbose=True):
-	# print status
-	if verbose:
-		teststring = ""
+class TesterFFT(tester.Tester):
 
-		for key, value in params.items():
-			teststring += "{}={:4} ".format(key, str(value))
+	def run_test(self, params: dict):
+		fft_size = 2**int(params["NFFT"])
 
-		print(teststring, end='')
+		# prepare input data file 
+		in_data = wavedat.gen_wave(size=fft_size, period=5*2*np.pi, 
+		amp=2**(int(params["DATA_WIDTH"])-1), wavetype=params["IN_SIGNAL"])
+		del params["IN_SIGNAL"]
 
-	# temp file for output data
-	result_file = "" 
-	params["OUT_FILE"] = result_file
-	params["IN_FILES"] += ""
+		## TODO: mkdir data if not exists
+		in_file = "data/in_file.dat" 
+		wavedat.write_dat(in_data, in_file)
+		params["IN_FILE"] = "../" + in_file # correct relative path if modelsim is running from another folder 
 
-	# prepare ethalon data result
+		# temp file for output data
+		out_file = "data/out_file.dat" 
+		params["OUT_FILE"] = "../" + out_file # correct relative path if modelsim is running from another folder 
 
-	# run modelsim 
-	# modelsim.run_with_params(folder="./modelsim", script="../batch_test.tcl", **params)
+		# prepare ethalon data result
+		math_data = [complex(round(i.real),round(i.imag)) for i in fft(in_data)]
 
-	# compare results
-	result = "UNKNOWN"
+		# run modelsim 
+		modelsim.run_with_params(folder="./modelsim", script="../batch_test.tcl", **params)
+		tb_data = wavedat.read_dat(out_file, fft_size)
 
-	# print results
-	if verbose: 
-		print(" - {}".format(result))
+		# wavedat.plot_complex_data({"math" : math_data, "tb" : tb_data})
+		# exit()
 
-	return 1 if result else 0
+		# compare results
+		result = 1 # OK by default
+		diff = 5
+		for i in range(len(math_data)):
+			if not -diff < (math_data[i].real - tb_data[i].real) < diff \
+			or not -diff < (math_data[i].imag - tb_data[i].imag) < diff:
+				result = 0 # if error found
+				break
+
+		# if result == 0:
+		# 	wavedat.plot_complex_data({"math" : math_data, "tb" : tb_data})
+		# 	exit()
+
+		return result
 
 if __name__ == '__main__':
-	# lists of parameter values
-	DATA_WIDTH = [8, 16, 32]
-	TWDL_WIDTH = [8, 16, 24]
-	MODE = ["UNSCALED"]
-	XSERIES = ["NEW", "UNI"]
-	FFT_SIZE = [64, 512, 1024, 2048, 8192]
-	IN_SIGNALS = ["sin", "square", "saw"]
-
-	# iterate through all the possible conbinations
-	for xser in XSERIES:
-		for md in MODE:
-			for dw in DATA_WIDTH:
-				for tw in TWDL_WIDTH:
-					for size in FFT_SIZE:
-						for sig in IN_SIGNALS:
-							params = {
-								"NFFT"       : int(np.log2(size)),
-								"DATA_WIDTH" : dw,
-								"TWDL_WIDTH" : tw,
-								"MODE"       : md,
-								"XSERIES"    : xser,
-								"IN_FILE"    : sig,
-							}
-							run_test(params)
+	tst = TesterFFT("./testing_tmp.ini")
+	tst.run()
 
 
